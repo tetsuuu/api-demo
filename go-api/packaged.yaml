@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'go-api
+
+  Slack Bot for test
+
+  '
+Globals:
+  Function:
+    Timeout: 5
+Resources:
+  slackBot:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://slack-bot-go/5626ff5aa050e5296410bbde19d2bd56
+      Handler: slack-bot
+      Runtime: go1.x
+      Tracing: Active
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /reply
+            Method: POST
+Outputs:
+  slackBotAPI:
+    Description: API Gateway endpoint URL for Prod environment for Slack Bot Function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/reply/
+  slackBot:
+    Description: Slack Bot Function
+    Value:
+      Fn::GetAtt:
+      - slackBot
+      - Arn
+  slackBotIamRole:
+    Description: Implicit IAM Role created for Slack Bot function
+    Value:
+      Fn::GetAtt:
+      - slackBotRole
+      - Arn
